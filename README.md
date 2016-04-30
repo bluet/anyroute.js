@@ -3,7 +3,7 @@ A flexable router you can use in nodejs and browser.
 
 ## require
 ```
-var anyroute = require('../index.js');
+var anyroute = require('anyroute');
 var ar = new anyroute;
 ```
 

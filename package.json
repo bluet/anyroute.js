@@ -16,12 +16,14 @@
     "browser",
     "lightweight",
     "flexable",
-    "tiny"
+    "tiny",
+    "rest"
   ],
   "author": "BlueT - Matthew Lien <BlueT@BlueT.org> (http://BlueT.org)",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/BlueT/anyroute.js/issues"
   },
-  "homepage": "https://github.com/BlueT/anyroute.js#readme"
+  "homepage": "https://github.com/BlueT/anyroute.js#readme",
+  "tonicExampleFilename": "example.js"
 }
