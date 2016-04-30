@@ -85,7 +85,8 @@ anyroute.prototype.set = function(path, handler, feat) {
 	//~ console.log('Final layers: ', layers);
 	
 	var ret = leaf(this.pool, layers, payload, feat, handler);
-	console.log('Set into Routing pool - result: ', ret)
+	//~ console.log('Set into Routing pool - result: ', ret)
+	return ret;
 }
 
 
@@ -115,7 +116,8 @@ anyroute.prototype.get = function(path, feat) {
 	//~ console.log('Final layers: ', layers);
 	
 	var ret = leaf(this.pool, layers, payload, feat);
-	console.log('Get from Routing pool - result: ', ret)
+	//~ console.log('Get from Routing pool - result: ', ret)
+	return ret;
 }
 
 
