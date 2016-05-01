@@ -182,6 +182,9 @@ function leaf (node, layers, payload, feat, handler) {
 			} else {
 				if (typeof(node.handler[feat]) != 'function') {
 					ret.err = 'not found';
+					if (node.handler['default']) {
+						feat = 'default';
+					}
 				}
 			}
 		}
