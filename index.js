@@ -99,9 +99,9 @@ anyroute.prototype.set = function(path, handler, feat) {
  * @returns {Function} handler
  * 
  */
-anyroute.prototype.get = function(path, feat) {
+anyroute.prototype.get = function(path, payload, feat) {
 	var layers = [];
-	var payload = {};
+	payload = payload || {};
 	feat = feat || 'default';
 	path = path.trim();
 	

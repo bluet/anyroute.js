@@ -15,14 +15,17 @@ console.log(ret);
 
 console.log('--------------------');
 
-var ret = ar.get('/collection/:cid/tab/:tabID');
+var ret = ar.get('/collection/123/tab/456');
 console.log(ret);
 
-var ret = ar.get('/collection/123/tab/456', 'default');
+var ret = ar.get('/collection/:cid/tab/:tabID', {}, 'default');
 console.log(ret);
 
-var ret = ar.get('/collection/CCC:ccc/tab/Tab:tabID', 'post');
+var ret = ar.get('/collection/CCC:ccc/tab/Tab:tabID', {user: 'keroro'}, 'post');
 console.log(ret);
 
-var ret = ar.get('/collection/foo/tab/bar', 'all');
+var ret = ar.get('/collection/foo/tab/bar', {cid: 'admin'}, 'all');
+console.log(ret);
+
+var ret = ar.get('/collection/abc/tab/xyz', {}, 'head');
 console.log(ret);
