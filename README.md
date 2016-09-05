@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/BlueT/anyroute.js.svg?branch=master)](https://travis-ci.org/BlueT/anyroute.js)
+
 # anyroute.js
 A flexable lightweight router you can use in nodejs and browser. No dependency.
 
