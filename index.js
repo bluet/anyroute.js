@@ -49,7 +49,7 @@ var anyroute = {
 
 
 function anyroute() {
-	var self = this;
+	//~ var self = this;
 	this.path = undefined;
 	this.pool = {};
 };
@@ -135,7 +135,7 @@ anyroute.prototype.get = function(path, payload, feat) {
  */
 // return err === 'not found' if there's no handler yet
 function leaf (node, layers, payload, feat, handler) {
-	var self = this;
+	//~ var self = this;
 	var ret = {
 		'err': undefined,
 		'handler': undefined,
