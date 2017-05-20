@@ -25,5 +25,10 @@
     "url": "https://github.com/BlueT/anyroute.js/issues"
   },
   "homepage": "https://github.com/BlueT/anyroute.js#readme",
-  "tonicExampleFilename": "example.js"
+  "tonicExampleFilename": "example.js",
+  "devDependencies": {
+    "app-root-path": "^2.0.1",
+    "istanbul": "^0.4.5",
+    "tape": "^4.6.3"
+  }
 }
