@@ -4,7 +4,7 @@
   "description": "A flexable lightweight router you can use in nodejs and browser. No dependency.",
   "main": "index.js",
   "scripts": {
-    "test": "node t/test.js"
+    "test": "node t/*.test.js"
   },
   "repository": {
     "type": "git",
