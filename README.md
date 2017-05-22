@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/BlueT/anyroute.js.svg?branch=master)](https://travis-ci.org/BlueT/anyroute.js)
+[![Build Status](https://travis-ci.org/BlueT/anyroute.js.svg?branch=master)](https://travis-ci.org/BlueT/anyroute.js) [![Quality Gate](https://sonarqube.com/api/badges/gate?key=anyroute)](https://sonarqube.com/dashboard/index/anyroute)
 
 # anyroute.js
 A flexable lightweight router you can use in nodejs and browser. No dependency.
