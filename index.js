@@ -1,5 +1,5 @@
 /*
- * anyroute - A flexable router you can use in nodejs and browser.
+ * anyroute - A flexible router you can use in nodejs and browser.
  *
  * Copyright (c) 2016, BlueT - Matthew Lien - 練喆明
  * 
@@ -52,7 +52,7 @@ function anyroute() {
 	//~ var self = this;
 	this.path = undefined;
 	this.pool = {};
-};
+}
 
 
 /*
@@ -67,16 +67,16 @@ function anyroute() {
 anyroute.prototype.set = function(path, handler, feat) {
 	var layers = [];
 	var payload = {};
-	feat = feat || 'default';
+	feat = feat || "default";
 	path = path.trim();
 	
-	if (feat === 'all') {
-		return ({err: 'reserved keyword in feat: ' + layer + '. Please use "default" instead.'})
+	if (feat === "all") {
+		return ({err: "reserved keyword in feat: " + feat + ". Please use \"default\" instead."});
 	}
 	
-	path.split('/').forEach(function(layer){
-		if (layer.match('^handler$') || layer.match('^PLACEHOLDER$') || layer.match('^var_name$')) {
-			return ({err: 'reserved keyword in path: ' + layer})
+	path.split("/").forEach(function(layer){
+		if (layer.match("^handler$") || layer.match("^PLACEHOLDER$") || layer.match("^var_name$")) {
+			return ({err: "reserved keyword in path: " + layer});
 		}
 		
 		layers.push(layer);
@@ -87,7 +87,7 @@ anyroute.prototype.set = function(path, handler, feat) {
 	var ret = leaf(this.pool, layers, payload, feat, handler);
 	//~ console.log('Set into Routing pool - result: ', ret)
 	return ret;
-}
+};
 
 
 /*
@@ -102,12 +102,12 @@ anyroute.prototype.set = function(path, handler, feat) {
 anyroute.prototype.get = function(path, payload, feat) {
 	var layers = [];
 	payload = payload || {};
-	feat = feat || 'default';
+	feat = feat || "default";
 	path = path.trim();
 	
-	path.split('/').forEach(function(layer){
-		if (layer.match('^handler$') || layer.match('^PLACEHOLDER$') || layer.match('^var_name$')) {
-			return ({err: 'reserved keyword in path: ' + layer})
+	path.split("/").forEach(function(layer){
+		if (layer.match("^handler$") || layer.match("^PLACEHOLDER$") || layer.match("^var_name$")) {
+			return ({err: "reserved keyword in path: " + layer});
 		}
 		
 		layers.push(layer);
@@ -118,7 +118,7 @@ anyroute.prototype.get = function(path, payload, feat) {
 	var ret = leaf(this.pool, layers, payload, feat);
 	//~ console.log('Get from Routing pool - result: ', ret)
 	return ret;
-}
+};
 
 
 /*
@@ -137,13 +137,13 @@ anyroute.prototype.get = function(path, payload, feat) {
 function leaf (node, layers, payload, feat, handler) {
 	//~ var self = this;
 	var ret = {
-		'err': undefined,
-		'handler': undefined,
-		'payload': undefined
+		"err": undefined,
+		"handler": undefined,
+		"payload": undefined
 	};
 	
-	if (handler && typeof(handler) != 'function') {
-		ret.err = 'handler should be a function';
+	if (handler && typeof(handler) != "function") {
+		ret.err = "handler should be a function";
 		return ret;	// error
 	}
 	
@@ -152,7 +152,7 @@ function leaf (node, layers, payload, feat, handler) {
 	if (tmp_next_layer_name) {
 		tmp_next_layer_name = tmp_next_layer_name.replace(/^:+/, "");
 	}
-	while (tmp_next_layer_name === '') {
+	while (tmp_next_layer_name === "") {
 		layers.shift();
 		
 		tmp_next_layer_name = layers[0];
@@ -167,29 +167,29 @@ function leaf (node, layers, payload, feat, handler) {
 		//~ console.log('In leaf Node*');
 		
 		if (handler) {		// .set
-			if (typeof(node.handler) === 'undefined') {
+			if (typeof(node.handler) === "undefined") {
 				node.handler = {};
 			}
 			if (node.handler[feat]) {
-				ret.err = 'handler already exist. Replacing.';
+				ret.err = "handler already exist. Replacing.";
 			}
 			node.handler[feat] = handler;
 		} else {
-			if (feat === 'all') {
-				if (typeof(node.handler) === 'undefined') {
-					ret.err = 'not found';
+			if (feat === "all") {
+				if (typeof(node.handler) === "undefined") {
+					ret.err = "not found";
 				}
 			} else {
-				if (typeof(node.handler[feat]) != 'function') {
-					ret.err = 'not found';
-					if (node.handler['default']) {
-						feat = 'default';
+				if (typeof(node.handler[feat]) != "function") {
+					ret.err = "not found";
+					if (node.handler["default"]) {
+						feat = "default";
 					}
 				}
 			}
 		}
 		
-		if (feat === 'all') {
+		if (feat === "all") {
 			ret.handler = node.handler;
 		} else {
 			ret.handler = node.handler[feat];
@@ -197,14 +197,14 @@ function leaf (node, layers, payload, feat, handler) {
 		ret.payload = payload;
 		
 		return ret;	// found
-	} else {			// recursing
+	} else {			// recurring
 		var next_layer = layers.shift();
 		//~ console.log('Next Layer: ', next_layer);
 		
 		if (next_layer.match(/^:/) && handler) {	// PLACEHOLDER in .set
 			next_layer = next_layer.replace(/^:+/, "");
-			node['var_name'] = next_layer;
-			next_layer = 'PLACEHOLDER';
+			node["var_name"] = next_layer;
+			next_layer = "PLACEHOLDER";
 			//~ console.log('Set PLACEHOLDER');
 		}
 		
@@ -213,12 +213,12 @@ function leaf (node, layers, payload, feat, handler) {
 			if (handler) {			// .set
 				//~ console.log('Create new Node');
 				node[next_layer] = {};
-			} else if (node.hasOwnProperty('PLACEHOLDER')) {	// .get
+			} else if (node.hasOwnProperty("PLACEHOLDER")) {	// .get
 				payload[node.var_name] = next_layer;
-				next_layer = 'PLACEHOLDER';
+				next_layer = "PLACEHOLDER";
 				//~ console.log('Get PLACEHOLDER');
 			} else {
-				ret.err = 'not found';
+				ret.err = "not found";
 				
 				return ret;	// error
 			}
