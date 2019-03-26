@@ -1,9 +1,9 @@
 "use strict";
 var test = require("tape"); // assign the tape library to the variable "test"
 var appRoot = require("app-root-path");
-var anyroute = require(appRoot + "/index.js");
+var Anyroute = require(appRoot + "/index.js");
 
-var ar = new anyroute;
+var ar = new Anyroute;
 
 function handler_default () {}
 function handler_post () {}
@@ -101,7 +101,7 @@ test("get post method handler and payload from a path.", function (t) {
 //~ console.log(ret);
 test("get all handlers and payload from a path.", function (t) {
 	var ret = ar.get("/collection/foo/tab/bar", {cid: "admin"}, "all");
-	t.equal(ret.err, undefined);
+	t.false(ret.err);
 	t.equal(ret.handler.default.name, "handler_default");
 	t.equal(ret.handler.post.name, "handler_post");
 	t.deepEqual(ret.payload, { cid: "foo", tabID: "bar" });

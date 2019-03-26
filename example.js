@@ -1,5 +1,5 @@
-var anyroute = require("anyroute");
-var ar = new anyroute;
+var Anyroute = require("anyroute");
+var ar = new Anyroute;
 
 function handler_default () {}
 function handler_post () {}
