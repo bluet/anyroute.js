@@ -12,7 +12,7 @@ function handler_post () {}
 //~ console.log(ret);
 test("set default handler to placeholder", function (t) {
 	var ret = ar.set("/collection/:cid/tab/:tabID", handler_default);
-	t.equal(ret.err, undefined);
+	t.false(ret.err);
 	t.equal(ret.handler.name, "handler_default");
 	t.deepEqual(ret.payload, {});
 	t.end();
@@ -40,7 +40,7 @@ test("set default handler to placeholder, speficying method \"default\". Replaci
 //~ console.log(ret);
 test("set default handler to placeholder, speficying method \"post\".", function (t) {
 	var ret = ar.set("/collection/:cid/tab/:tabID/", handler_post, "post");
-	t.equal(ret.err, undefined);
+	t.false(ret.err);
 	t.equal(ret.handler.name, "handler_post");
 	t.deepEqual(ret.payload, {});
 	t.end();
@@ -56,7 +56,7 @@ test("set default handler to placeholder, speficying method \"post\".", function
 //~ console.log(ret);
 test("get default handler and payload from a path.", function (t) {
 	var ret = ar.get("/collection/123/tab/456");
-	t.equal(ret.err, undefined);
+	t.false(ret.err);
 	t.equal(ret.handler.name, "handler_default");
 	t.deepEqual(ret.payload, { cid: "123", tabID: "456" });
 	t.end();
@@ -71,7 +71,7 @@ test("get default handler and payload from a path.", function (t) {
 //~ console.log(ret);
 test("get default handler and payload from a path.", function (t) {
 	var ret = ar.get("/collection/:cid/tab/:tabID", {}, "default");
-	t.equal(ret.err, undefined);
+	t.false(ret.err);
 	t.equal(ret.handler.name, "handler_default");
 	t.deepEqual(ret.payload, { cid: ":cid", tabID: ":tabID" });
 	t.end();
@@ -86,7 +86,7 @@ test("get default handler and payload from a path.", function (t) {
 //~ console.log(ret);
 test("get post method handler and payload from a path.", function (t) {
 	var ret = ar.get("/collection/CCC:ccc/tab/Tab:tabID", {user: "keroro"}, "post");
-	t.equal(ret.err, undefined);
+	t.false(ret.err);
 	t.equal(ret.handler.name, "handler_post");
 	t.deepEqual(ret.payload, { user: "keroro", cid: "CCC:ccc", tabID: "Tab:tabID" });
 	t.end();
