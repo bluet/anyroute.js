@@ -4,15 +4,15 @@
 A flexable lightweight router you can use in nodejs and browser. No dependency.
 
 ## require
-```
+~~~~ js
 var anyroute = require('anyroute');
 var ar = new anyroute;
-```
+~~~~
 
 ## Setter
 Define a route and placeholder.
 Returns error (if any), the handler been set, and an empty payload.
-```
+~~~~ js
 function handler_default () {};
 function handler_post () {};
 
@@ -42,10 +42,10 @@ console.log(ret);
 // { err: undefined,
 //   handler: [Function: handler_post],
 //   payload: {} }
-```
+~~~~
 
 ## Getter
-```
+~~~~ js
 // If no feat (a tag) has been set, means 'default'.
 var ret = ar.get('/collection/123/tab/456');
 
@@ -95,4 +95,20 @@ console.log(ret);
 // { err: 'not found',
 //   handler: [Function: handler_default],
 //   payload: { cid: 'abc', tabID: 'xyz' } }
-```
+~~~~
+
+### run() shortcut
+`run()` is a shortcut of `handler(payload)`. Returns the returned value of `handler(payload)`.
+
+`run(callback)` is a shortcut of `let tmp = handler(payload); callback(tmp);`. Returns the returned value of `callback(tmp)`.
+
+~~~~ js
+var ret = ar.get("/collection/:cid/tab/:tabID", {}, "default");
+
+let returnedByHandler = ret.run();      // same as  ret.handler(ret.payload)
+
+ret.run((input) => console.log("callback in run(): " + JSON.stringify(input, null, 4)));
+// same as
+// let returnedByHandler = ret.handler(ret.payload);
+// console.log("callback in run(): " + JSON.stringify(returnedByHandler, null, 4));
+~~~~
