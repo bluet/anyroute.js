@@ -5,7 +5,7 @@ var Anyroute = require(appRoot + "/index.js");
 
 var ar = new Anyroute;
 
-function handler_default () {}
+function handler_default () {console.log(arguments); return arguments[0]; }
 function handler_post () {}
 
 //~ var ret = ar.set('/collection/:cid/tab/:tabID', handler_default);
@@ -74,6 +74,8 @@ test("get default handler and payload from a path.", function (t) {
 	t.false(ret.err);
 	t.equal(ret.handler.name, "handler_default");
 	t.deepEqual(ret.payload, { cid: ":cid", tabID: ":tabID" });
+	t.deepEqual(ret.payload, ret.run());
+	ret.run((input) => console.log("callback in run(): " + JSON.stringify(input, null, 4)));
 	t.end();
 });
 //~ { err: undefined,
@@ -122,6 +124,8 @@ test("get head method handler and payload from a path. No match so return error 
 	t.equal(ret.err, "not found");
 	t.equal(ret.handler.name, "handler_default");
 	t.deepEqual(ret.payload, { cid: "abc", tabID: "xyz" });
+	// t.deepEqual(ret, ret.run());
+	// ret.run((input) => console.log("callback in run(): " + JSON.stringify(input, null, 4)));
 	t.end();
 });
 //~ { err: 'not found',
