@@ -27,3 +27,8 @@ console.log(ret);
 
 ret = ar.get("/collection/foo/tab/bar", "all");
 console.log(ret);
+
+console.log("--------------------");
+
+ret = ar.get("/XXX/abc/PPP/xyz");
+console.log(ret);

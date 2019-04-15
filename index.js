@@ -237,7 +237,8 @@ function leaf(node, layers, payload, feat, handler) {
 			} else {
 				ret.err = "not found";
 
-				return ret; // error
+				// return ret; // error
+				return new MatchResult(ret);
 			}
 		}
 
@@ -263,24 +264,33 @@ function leaf(node, layers, payload, feat, handler) {
 		// return new Matched(ret);
 	}
 
-	return new Matched(ret);
+	return new MatchResult(ret);
 }
 
 
-function Matched(ret) {
+function MatchResult (ret) {
 	this.err = ret.err;
 	this.handler = ret.handler;
 	this.payload = ret.payload;
 	return this;
 }
 
-Matched.prototype.run = function(cb) {
+MatchResult.prototype.run = function(cb) {
+	if (this.err) {
+		return this;
+	}
+
 	let result = this.handler(this.payload);
+	
 	if (cb && typeof cb === "function") {
 		return cb(result);
-	} else {
-		return result;
 	}
+	
+	return result;
 };
 
+anyroute.prototype.MatchResult = MatchResult;
+
 module.exports = anyroute;
+module.exports.Anyroute = anyroute;
+module.exports.MatchResult = MatchResult;

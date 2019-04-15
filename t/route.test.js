@@ -119,7 +119,7 @@ test("get all handlers and payload from a path.", function (t) {
 
 //~ var ret = ar.get('/collection/abc/tab/xyz', {}, 'head');
 //~ console.log(ret);
-test("get head method handler and payload from a path. No match so return error and default handler.", function (t) {
+test("get head method handler and payload from a path. No matching feat so return error and default handler.", function (t) {
 	var ret = ar.get("/collection/abc/tab/xyz", {}, "head");
 	t.equal(ret.err, "not found");
 	t.equal(ret.handler.name, "handler_default");
@@ -131,3 +131,13 @@ test("get head method handler and payload from a path. No match so return error 
 //~ { err: 'not found',
 //~ handler: [Function: handler_default],
 //~ payload: { cid: 'abc', tabID: 'xyz' } }
+
+test("get handler and payload from a path. No match so return error.", function (t) {
+	var ret = ar.get("/XXX/abc/PPP/xyz");
+	t.equal(ret.err, "not found");
+	t.false(ret.handler);
+	t.false(ret.payload);
+	// t.deepEqual(ret, ret.run());
+	// ret.run((input) => console.log("callback in run(): " + JSON.stringify(input, null, 4)));
+	t.end();
+});
