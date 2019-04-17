@@ -3,98 +3,79 @@
 # anyroute.js
 A flexable lightweight router you can use in nodejs and browser. No dependency.
 
-## require
+## SYNOPSIS
 ~~~~ js
-var anyroute = require('anyroute');
-var ar = new anyroute;
+const {Anyroute, MatchResult} = require('anyroute');
+const anyroute = new Anyroute;
+
+anyroute.set('/happy/:foo/and/:bar', (params) => { console.log("Happy " + params.foo + " and " + params.bar ); return params.foo + params.bar; });
+
+let foobar = anyroute.get('/happy/trees/and/kitties').run();
+// Happy trees and kitties
+// foobar: treeskitties
+
+anyroute.set('/:aaa/:bbb', (match) => {return match;})
+        .get('/doraemon/superman')
+        .run({'c':'c'}, (result) => console.log(result));
+// { 'aaa': 'doraemon', 'bbb': 'superman', 'c': 'c' }
+
+anyroute.notfound(function (matchResult) {
+        // call when NO exact match found
+        // matchResult is an MatchResult Object
+        return matchResult.payload.foo + matchResult.payload.and;
+});
+
+~~~~
+
+## require
+
+~~~~ js
+const {Anyroute, MatchResult} = require('anyroute');
+var anyroute = new Anyroute;
 ~~~~
 
 ## Setter
 Define a route and placeholder.
 Returns error (if any), the handler been set, and an empty payload.
+
 ~~~~ js
-function handler_default () {};
+function handler () {};
 function handler_post () {};
 
+
+anyroute.set('/collection/:cid/tab/:tabID', handler);
 // If no feat (a tag) has been set, means 'default'.
-var ret = ar.set('/collection/:cid/tab/:tabID', handler_default);
 
-console.log(ret);
-// { err: undefined,
-//   handler: [Function: handler_default],
-//   payload: {} }
-
-
+var ret = anyroute.set('/collection/:cid/tab/:tabID', handler, 'default');
 // When a handler of a feat has previously been set,
 // it'll overwrite with the new, and return a message in err.
-var ret = ar.set('/collection/:cid/tab/:tabID', handler_default, 'default');
+// Returns modified anyroute itself, too.
 
-console.log(ret);
-// { err: 'handler already exist. Replacing.',
-//   handler: [Function: handler_default],
-//   payload: {} }
-
-
+var ret = anyroute.set('/collection/:cid/tab/:tabID/', handler_post, 'post')
 // feat can be anything, just like a tag
-var ret = ar.set('/collection/:cid/tab/:tabID/', handler_post, 'post')
-
-console.log(ret);
-// { err: undefined,
-//   handler: [Function: handler_post],
-//   payload: {} }
 ~~~~
 
 ## Getter
 ~~~~ js
+var ret = anyroute.get('/collection/123/tab/456');
 // If no feat (a tag) has been set, means 'default'.
-var ret = ar.get('/collection/123/tab/456');
+// Returns MatchResult object
 
-console.log(ret);
-// { err: undefined,
-//   handler: [Function: handler_default],
-//   payload: { cid: '123', tabID: '456' } }
-
-
-// The ':' prefix won't break the .get
-var ret = ar.get('/collection/:cid/tab/:tabID', {}, 'default');
-
-console.log(ret);
-// { err: undefined,
-//   handler: [Function: handler_default],
-//   payload: { cid: ':cid', tabID: ':tabID' } }
-
-
+var ret = anyroute.get('/collection/ccc/tab/ttt', {user: 'keroro'});
 // You can put user's payload, and they'll be merged into one in return.
-var ret = ar.get('/collection/CCC:ccc/tab/Tab:tabID', {user: 'keroro'}, 'post');
+// Custom payload with the same name will be override by get().
+// ret.payload: { user: 'keroro', cid: 'ccc', tabID: 'ttt' }
 
-console.log(ret);
-// { err: undefined,
-//   handler: [Function: handler_post],
-//   payload: { user: 'keroro', cid: 'CCC:ccc', tabID: 'Tab:tabID' } }
-
-
-// User's payload with the same name will be overwrited, for security,
-// so you won't get hurt by bad guys.
+var ret = anyroute.get('/collection/foo/tab/bar', {cid: 'admin'}, 'all');
 // Also the 'all' means return all handlers from all feats.
-var ret = ar.get('/collection/foo/tab/bar', {cid: 'admin'}, 'all');
+// ret.handler: 
+//    { default: [Function: handler],
+//      post: [Function: handler_post] }
 
-console.log(ret);
-// { err: undefined,
-//   handler: 
-//    { default: [Function: handler_default],
-//      post: [Function: handler_post] },
-//   payload: { cid: 'foo', tabID: 'bar' } }
-
-
+var ret = anyroute.get('/collection/abc/tab/xyz', {}, 'head');
 // Getting handler of a feat you've never set before,
 // will return the default handler, with a error message.
 // So you can have the fallback if you want.
-var ret = ar.get('/collection/abc/tab/xyz', {}, 'head');
-
-console.log(ret);
-// { err: 'not found',
-//   handler: [Function: handler_default],
-//   payload: { cid: 'abc', tabID: 'xyz' } }
 ~~~~
 
 ### run() shortcut
@@ -102,13 +83,37 @@ console.log(ret);
 
 `run(callback)` is a shortcut of `let tmp = handler(payload); callback(tmp);`. Returns the returned value of `callback(tmp)`.
 
+Call with `run([object?: payload, function?: callback])`
+
 ~~~~ js
+var result = ar.get("/collection/:cid/tab/:tabID").run();
+
 var ret = ar.get("/collection/:cid/tab/:tabID", {}, "default");
+let returnedByHandler = ret.run({req.body.data});
+// also can have custom payload here as first argument
+// similar to ret.handler(ret.payload)
 
-let returnedByHandler = ret.run();      // same as  ret.handler(ret.payload)
+let cid = ret.run({req.body.data}, (x) => x.cid);
+let tab = ret.run((x) => x.tabID);
+// additional processing on data returned by pre-set handler
+~~~~
 
-ret.run((input) => console.log("callback in run(): " + JSON.stringify(input, null, 4)));
-// same as
-// let returnedByHandler = ret.handler(ret.payload);
-// console.log("callback in run(): " + JSON.stringify(returnedByHandler, null, 4));
+If ret.err exist, it calls `notfound` handler with `MatchResult` as input.
+
+~~~~ js
+// setup `notfound` handler
+anyroute.notfound(function (matchResult) {
+        // call when NO exact match found
+        // matchResult is an MatchResult Object
+        return matchResult.payload.foo + matchResult.payload.bar;
+});
+~~~~
+
+### MatchResult
+~~~~ js
+MatchResult {
+  err: undefined,
+  handler: [Function: handler],
+  payload: { foo: 'forty', bar: 'bobs', and: 'adam' },
+  default: undefined }
 ~~~~

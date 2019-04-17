@@ -7,49 +7,75 @@
  * First Release Date: 2016-04-30
  */
 
-/*
+/* 
  * SYNOPSIS
  *
- * var ar = new anyroute;
- *
- * function handler1 () {};
- * ar.set('/collection/:cid/tab/:tabID', handler1);
- * ar.get('/collection/:cid/tab/:tabID');
- *
- * function handler2 () {};
- * ar.set('/collection/:cid/tab/:tabID/', handler2);
+ * const {Anyroute, MatchResult} = require('anyroute');
+ * const anyroute = new Anyroute;
+ * 
+ * anyroute.set('/happy/:foo/and/:bar', (params) => { console.log("Happy " + params.foo + " and " + params.bar ); return params.foo + params.bar; });
+ * 
+ * let foobar = anyroute.get('/happy/trees/and/kitties').run();
+ * // Happy trees and kitties
+ * // foobar: treeskitties
+ * 
+ * anyroute.set('/:aaa/:bbb', (match) => {return match;})
+ *         .get('/doraemon/superman')
+ *         .run({'c':'c'}, (result) => console.log(result));
+ * // { 'aaa': 'doraemon', 'bbb': 'superman', 'c': 'c' }
+ * 
+ * anyroute.notfound(function (matchResult) {
+ *         // call when NO exact match found
+ *         // matchResult is an MatchResult Object
+ *         return matchResult.payload.foo + matchResult.payload.and;
+ * });
  */
 
 /*
-Example: /collection/:cid/tab/:tabID
-Path: anyroute.path.collection.PLACEHOLDER.tab.PLACEHOLDER
-Structure:
-var anyroute = {
-	path: {
-		handler: function() {},
-		collection: {
-			handler: function() {},
-			var_name: 'cid'
-			'PLACEHOLDER': {
-				handler: function() {},
-				tab: {
-					handler: function() {},
-					var_name: 'tabID'
-					'PLACEHOLDER': {
-						handler: function() {}
-					}
-				}
-			}
-		}
-	}
-}
+ * Example: /collection/:cid/tab/:tabID
+ * Path: anyroute.path.collection.PLACEHOLDER.tab.PLACEHOLDER
+ * Structure:
+ * var anyroute = {
+ * 	pool: {
+ * 		handler: function() {},
+ * 		collection: {
+ * 			handler: function() {},
+ * 			var_name: 'cid'
+ * 			'PLACEHOLDER': {
+ * 				handler: function() {},
+ * 				tab: {
+ * 					handler: function() {},
+ * 					var_name: 'tabID'
+ * 					'PLACEHOLDER': {
+ * 						handler: function() {}
+ * 					}
+ * 				}
+ * 			}
+ * 		}
+ * 	}
+ * }
 */
 
-function anyroute() {
+function Anyroute (params = {}) {
 	//~ var self = this;
-	this.path = undefined;
-	this.pool = {};
+	this.default = params.default;
+	// this.path = params.path;
+	this.pool = params.pool || {};
 }
+
+
+/*
+ *
+ * name: default
+ * @param {Function} handler - Handler if no matching path
+ * @returns {Object} Anyroute
+ *
+ */
+Anyroute.prototype.notfound = function(handler) {
+	this.default = typeof(handler) === 'function' ? handler : function () { return handler; };
+	return this;
+};
+
 
 /*
  *
@@ -60,7 +86,7 @@ function anyroute() {
  * @returns {Function} handler
  *
  */
-anyroute.prototype.set = function(path, handler, feat) {
+Anyroute.prototype.set = function(path, handler, feat) {
 	var layers = [];
 	var payload = {};
 	feat = feat || "default";
@@ -89,9 +115,8 @@ anyroute.prototype.set = function(path, handler, feat) {
 
 	//~ console.log('Final layers: ', layers);
 
-	var ret = leaf(this.pool, layers, payload, feat, handler);
-	//~ console.log('Set into Routing pool - result: ', ret)
-	return ret;
+	let ret = leaf(this.pool, layers, payload, feat, handler);
+	return Object.assign(this, ret);
 };
 
 /*
@@ -103,7 +128,7 @@ anyroute.prototype.set = function(path, handler, feat) {
  * @returns {Function} handler
  *
  */
-anyroute.prototype.get = function(path, payload, feat) {
+Anyroute.prototype.get = function(path, payload, feat) {
 	var layers = [];
 	payload = payload || {};
 	feat = feat || "default";
@@ -121,11 +146,13 @@ anyroute.prototype.get = function(path, payload, feat) {
 		layers.push(layer);
 	});
 
-	//~ console.log('Final layers: ', layers);
+	// console.log('Final layers: ', layers);
 
 	var ret = leaf(this.pool, layers, payload, feat);
-	//~ console.log('Get from Routing pool - result: ', ret)
-	return ret;
+	ret.default = this.default;
+	// console.log('Get from Routing pool - result: ', ret)
+	
+	return new MatchResult(ret);
 };
 
 /*
@@ -135,19 +162,13 @@ anyroute.prototype.get = function(path, payload, feat) {
  * @param {Array} layers - Layers of path
  * @param {Object} payload - Current payload
  * @param {Function} [handler=] - Handler for the Path
- * @returns {String} err
+ * @returns {String} err - return err === 'not found' if there's no handler yet
  * @returns {Object} payload
  * @returns {Function} handler
  *
  */
-// return err === 'not found' if there's no handler yet
 function leaf(node, layers, payload, feat, handler) {
-	//~ var self = this;
-	var ret = {
-		err: undefined,
-		handler: undefined,
-		payload: undefined,
-	};
+	var ret = {};
 
 	if (handler && typeof handler != "function") {
 		ret.err = "handler should be a function";
@@ -164,56 +185,51 @@ function leaf(node, layers, payload, feat, handler) {
 
 		tmp_next_layer_name = layers[0];
 		if (tmp_next_layer_name) {
-			tmp_next_layer_name = tmp_next_layer_name.replace(
-				/^:+/,
-				""
-			);
+			tmp_next_layer_name = tmp_next_layer_name.replace(/^:+/, "");
 		}
 	}
 
-	//~ console.log('Entered Node');
+	// Entered Node
 
 	if (layers.length === 0) {
 		// leaf node
-		//~ console.log('In leaf Node*');
 
 		if (handler) {
 			// .set
 			if (typeof node.handler === "undefined") {
 				node.handler = {};
 			}
-			if (node.handler[feat]) {
-				ret.err = "handler already exist. Replacing.";
-			}
 			node.handler[feat] = handler;
 		} else {
+			// .get
 			if (feat === "all") {
 				if (typeof node.handler === "undefined") {
 					ret.err = "not found";
 				}
 			} else {
-				if (typeof node.handler[feat] != "function") {
+				if (!node.handler || typeof node.handler[feat] != "function") {
 					ret.err = "not found";
-					if (node.handler["default"]) {
+					if (node.handler && node.handler["default"]) {
 						feat = "default";
 					}
 				}
 			}
 		}
 
-		if (feat === "all") {
-			ret.handler = node.handler;
-		} else {
-			ret.handler = node.handler[feat];
+		if (node.handler) {
+			// has handler for current path
+			if (feat === "all") {
+				ret.handler = node.handler;
+			} else {
+				ret.handler = node.handler[feat];
+			}
 		}
+
 		ret.payload = payload;
 
-		// return ret;	// found
-		// return new Matched(ret); // found
 	} else {
 		// recurring
-		var next_layer = layers.shift();
-		//~ console.log('Next Layer: ', next_layer);
+		let next_layer = layers.shift();
 
 		if (next_layer.match(/^:/) && handler) {
 			// PLACEHOLDER in .set
@@ -223,61 +239,74 @@ function leaf(node, layers, payload, feat, handler) {
 			//~ console.log('Set PLACEHOLDER');
 		}
 
-		if (!node.hasOwnProperty(next_layer)) {
+		if (node.hasOwnProperty(next_layer)) {
+			ret = leaf(node[next_layer], layers, payload, feat, handler); 
+		} else {
 			//~ console.log('No Path Matched!');
 			if (handler) {
 				// .set
 				//~ console.log('Create new Node');
 				node[next_layer] = {};
+				ret = leaf(node[next_layer], layers, payload, feat, handler);
 			} else if (node.hasOwnProperty("PLACEHOLDER")) {
-				// .get
+				// .get and set value to placeholder var
 				payload[node.var_name] = next_layer;
 				next_layer = "PLACEHOLDER";
 				//~ console.log('Get PLACEHOLDER');
+				ret = leaf(node[next_layer], layers, payload, feat, handler);
 			} else {
 				ret.err = "not found";
-
-				// return ret; // error
-				return new MatchResult(ret);
 			}
 		}
 
-		ret = leaf(node[next_layer], layers, payload, feat, handler);
-
-		// if (ret.handler) {
-		// 	// return ret;
-		// 	return new Matched(ret);
-		// } else {		// .get and fallback
-		// 	ret.handler = node.handler;
-		// 	//~ console.log('FALLBACK!');
-
-		// 	// return ret;
-		// 	return new Matched(ret);
-		// }
-
+		
 		if (!ret.handler) {
 			// .get and fallback
-			ret.handler = node.handler;
-			//~ console.log('FALLBACK!');
+			// console.log('FALLBACK!');
+			if (node.handler) {
+				ret.handler = node.handler[feat] ? node.handler[feat] : node.handler['default'];
+			} else if (node.PLACEHOLDER && node.PLACEHOLDER.handler) {
+				ret.handler = node.PLACEHOLDER.handler[feat] ? node.PLACEHOLDER.handler[feat] : node.PLACEHOLDER.handler['default'];
+			}
+
+			ret.payload = ret.payload ? ret.payload : payload ;
 		}
-		// return ret;
-		// return new Matched(ret);
 	}
 
-	return new MatchResult(ret);
+	// console.log(ret);
+	return ret;
 }
 
 
-function MatchResult (ret) {
+function MatchResult (ret = {}) {
 	this.err = ret.err;
 	this.handler = ret.handler;
 	this.payload = ret.payload;
+	this.default = ret.default;
+	
 	return this;
 }
 
-MatchResult.prototype.run = function(cb) {
+MatchResult.prototype.run = function(params, cb) {
+
+	// only cb
+	if (typeof params === 'function') {
+		cb = params;
+		params = undefined;
+	}
+
+	if (typeof params === 'object') {
+		Object.entries(params).forEach(([key, value]) => {
+			if (!this.payload[key]) {
+				this.payload[key] = value;
+			}
+		});
+	}
+
+	// console.log(this);
+
 	if (this.err) {
-		return this;
+		return typeof(this.default) === 'function' ? this.default(this) : this;
 	}
 
 	let result = this.handler(this.payload);
@@ -289,8 +318,8 @@ MatchResult.prototype.run = function(cb) {
 	return result;
 };
 
-anyroute.prototype.MatchResult = MatchResult;
+Anyroute.prototype.MatchResult = MatchResult;
 
-module.exports = anyroute;
-module.exports.Anyroute = anyroute;
+module.exports = Anyroute;
+module.exports.Anyroute = Anyroute;
 module.exports.MatchResult = MatchResult;
