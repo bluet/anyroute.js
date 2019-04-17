@@ -1,6 +1,6 @@
 {
   "name": "anyroute",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "A flexable lightweight router you can use in nodejs and browser. No dependency.",
   "main": "index.js",
   "scripts": {
