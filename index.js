@@ -72,7 +72,7 @@ function Anyroute (params = {}) {
  *
  */
 Anyroute.prototype.notfound = function(handler) {
-	this.default = typeof(handler) === 'function' ? handler : function () { return handler; };
+	this.default = typeof(handler) === "function" ? handler : function () { return handler; };
 	return this;
 };
 
@@ -101,17 +101,7 @@ Anyroute.prototype.set = function(path, handler, feat) {
 		};
 	}
 
-	path.split("/").forEach(function(layer) {
-		if (
-			layer.match("^handler$") ||
-			layer.match("^PLACEHOLDER$") ||
-			layer.match("^var_name$")
-		) {
-			return { err: "reserved keyword in path: " + layer };
-		}
-
-		layers.push(layer);
-	});
+	layers = path_parser(path);
 
 	//~ console.log('Final layers: ', layers);
 
@@ -134,6 +124,20 @@ Anyroute.prototype.get = function(path, payload, feat) {
 	feat = feat || "default";
 	path = path.trim();
 
+	layers = path_parser(path);
+
+	// console.log('Final layers: ', layers);
+
+	var ret = leaf(this.pool, layers, payload, feat);
+	ret.default = this.default;
+	// console.log('Get from Routing pool - result: ', ret)
+	
+	return new MatchResult(ret);
+};
+
+
+function path_parser (path) {
+	let layers = [];
 	path.split("/").forEach(function(layer) {
 		if (
 			layer.match("^handler$") ||
@@ -145,15 +149,9 @@ Anyroute.prototype.get = function(path, payload, feat) {
 
 		layers.push(layer);
 	});
+	return layers;
+}
 
-	// console.log('Final layers: ', layers);
-
-	var ret = leaf(this.pool, layers, payload, feat);
-	ret.default = this.default;
-	// console.log('Get from Routing pool - result: ', ret)
-	
-	return new MatchResult(ret);
-};
 
 /*
  *
@@ -264,9 +262,9 @@ function leaf(node, layers, payload, feat, handler) {
 			// .get and fallback
 			// console.log('FALLBACK!');
 			if (node.handler) {
-				ret.handler = node.handler[feat] ? node.handler[feat] : node.handler['default'];
+				ret.handler = node.handler[feat] ? node.handler[feat] : node.handler["default"];
 			} else if (node.PLACEHOLDER && node.PLACEHOLDER.handler) {
-				ret.handler = node.PLACEHOLDER.handler[feat] ? node.PLACEHOLDER.handler[feat] : node.PLACEHOLDER.handler['default'];
+				ret.handler = node.PLACEHOLDER.handler[feat] ? node.PLACEHOLDER.handler[feat] : node.PLACEHOLDER.handler["default"];
 			}
 
 			ret.payload = ret.payload ? ret.payload : payload ;
@@ -290,12 +288,12 @@ function MatchResult (ret = {}) {
 MatchResult.prototype.run = function(params, cb) {
 
 	// only cb
-	if (typeof params === 'function') {
+	if (typeof params === "function") {
 		cb = params;
 		params = undefined;
 	}
 
-	if (typeof params === 'object') {
+	if (typeof params === "object") {
 		Object.entries(params).forEach(([key, value]) => {
 			if (!this.payload[key]) {
 				this.payload[key] = value;
@@ -306,7 +304,7 @@ MatchResult.prototype.run = function(params, cb) {
 	// console.log(this);
 
 	if (this.err) {
-		return typeof(this.default) === 'function' ? this.default(this) : this;
+		return typeof(this.default) === "function" ? this.default(this) : this;
 	}
 
 	let result = this.handler(this.payload);

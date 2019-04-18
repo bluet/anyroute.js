@@ -5,13 +5,16 @@ const {Anyroute, MatchResult} = require(appRoot + "/index.js");
 
 var anyroute = new Anyroute;
 
-function handler () {console.log(arguments); return arguments[0]; }
+function handler () {
+	// console.log(arguments);
+	return arguments[0];
+}
 function handler_post () {}
 
 
 test("set default handler to placeholder", function (t) {
 	var ret = anyroute.set("/collection/:cid/tab/:tabID", handler);
-	console.log(ret);
+	// console.log(ret);
 	t.true(ret instanceof Anyroute);
 	t.false(ret.err);
 	t.equal(ret.handler.name, "handler");
@@ -118,7 +121,7 @@ test("set then get and run", function (t) {
 	t.deepEqual(ret, { foo: 'forty', bar: 'bobs', and: 'adam' });
 
 	anyroute.notfound(function (matchResult) { return matchResult.payload.foo + matchResult.payload.and; });
-	var ret = anyroute.set("/f/:foo/b/:bar/bro", handler).get('/f/forty/b/bobs').run({foo: 'five', and: 'adams'});
+	ret = anyroute.set("/f/:foo/b/:bar/bro", handler).get('/f/forty/b/bobs').run({foo: 'five', and: 'adams'});
 	t.deepEqual(ret, 'fortyadams');
 	
 	t.end();
