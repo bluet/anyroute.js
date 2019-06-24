@@ -10,7 +10,7 @@ A flexible lightweight router you can use in nodejs and browser. No dependency.
 
 Or find help from:
 - https://www.npmjs.com/package/anyroute
-- https://github.com/BlueT/anyroute
+- https://github.com/BlueT/anyroute.js
 
 ## SYNOPSIS
 
