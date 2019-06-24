@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/BlueT/anyroute.js.svg?branch=master)](https://travis-ci.org/BlueT/anyroute.js)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=anyroute&metric=alert_status)](https://sonarcloud.io/dashboard?id=anyroute)
-[![Open Source Helpers](https://www.codetriage.com/bluet/anyroute.js/badges/users.svg)](https://www.codetriage.com/bluet/anyroute.js)
-
+[![Open Source Helpers](https://www.codetriage.com/bluet/anyroute.js/badges/users.svg)](https://www.codetriage.com/bluet/anyroute.js)  
 [![npm version](https://img.shields.io/npm/v/anyroute.svg)](https://www.npmjs.org/package/anyroute)
 [![install size](https://packagephobia.now.sh/badge?p=anyroute)](https://packagephobia.now.sh/result?p=anyroute)
 [![npm downloads](https://img.shields.io/npm/dm/anyroute.svg)](http://npm-stat.com/charts.html?package=anyroute)
