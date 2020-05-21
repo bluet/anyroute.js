@@ -27,7 +27,7 @@
   "homepage": "https://github.com/BlueT/anyroute.js#readme",
   "tonicExampleFilename": "example.js",
   "devDependencies": {
-    "app-root-path": "^2.0.1",
+    "app-root-path": "^3.0.0",
     "istanbul": "^0.4.5",
     "tape": "^4.6.3"
   }
