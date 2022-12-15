@@ -7,23 +7,23 @@
  * First Release Date: 2016-04-30
  */
 
-/* 
+/*
  * SYNOPSIS
  *
  * const {Anyroute, MatchResult} = require('anyroute');
  * const anyroute = new Anyroute;
- * 
+ *
  * anyroute.set('/happy/:foo/and/:bar', (params) => { console.log("Happy " + params.foo + " and " + params.bar ); return params.foo + params.bar; });
- * 
+ *
  * let foobar = anyroute.get('/happy/trees/and/kitties').run();
  * // Happy trees and kitties
  * // foobar: treeskitties
- * 
+ *
  * anyroute.set('/:aaa/:bbb', (match) => {return match;})
  *         .get('/doraemon/superman')
  *         .run({'c':'c'}, (result) => console.log(result));
  * // { 'aaa': 'doraemon', 'bbb': 'superman', 'c': 'c' }
- * 
+ *
  * anyroute.notfound(function (matchResult) {
  *         // call when NO exact match found
  *         // matchResult is an MatchResult Object
@@ -71,7 +71,7 @@ function Anyroute (params = {}) {
  * @returns {Object} Anyroute
  *
  */
-Anyroute.prototype.notfound = function(handler) {
+Anyroute.prototype.notfound = function (handler) {
 	this.default = typeof(handler) === "function" ? handler : function () { return handler; };
 	return this;
 };
@@ -86,7 +86,7 @@ Anyroute.prototype.notfound = function(handler) {
  * @returns {Function} handler
  *
  */
-Anyroute.prototype.set = function(path, handler, feat) {
+Anyroute.prototype.set = function (path, handler, feat) {
 	let layers = [];
 	let payload = {};
 	feat = feat || "default";
@@ -94,10 +94,10 @@ Anyroute.prototype.set = function(path, handler, feat) {
 
 	if (feat === "all") {
 		return {
-			err:
-				"reserved keyword in feat: " +
-				feat +
-				". Please use \"default\" instead.",
+			"err":
+				"reserved keyword in feat: "
+				+ feat
+				+ ". Please use \"default\" instead.",
 		};
 	}
 
@@ -118,7 +118,7 @@ Anyroute.prototype.set = function(path, handler, feat) {
  * @returns {Function} handler
  *
  */
-Anyroute.prototype.get = function(path, payload, feat) {
+Anyroute.prototype.get = function (path, payload, feat) {
 	let layers = [];
 	payload = payload || {};
 	feat = feat || "default";
@@ -131,20 +131,20 @@ Anyroute.prototype.get = function(path, payload, feat) {
 	let ret = leaf(this.pool, layers, payload, feat);
 	ret.default = this.default;
 	// console.log('Get from Routing pool - result: ', ret)
-	
+
 	return new MatchResult(ret);
 };
 
 
 function path_parser (path) {
 	let layers = [];
-	path.split("/").forEach(function(layer) {
+	path.split("/").forEach((layer) => {
 		if (
-			layer.match("^handler$") ||
-			layer.match("^PLACEHOLDER$") ||
-			layer.match("^var_name$")
+			layer.match("^handler$")
+			|| layer.match("^PLACEHOLDER$")
+			|| layer.match("^var_name$")
 		) {
-			return { err: "reserved keyword in path: " + layer };
+			return { "err": "reserved keyword in path: " + layer };
 		}
 
 		layers.push(layer);
@@ -165,8 +165,10 @@ function path_parser (path) {
  * @returns {Function} handler
  *
  */
-function leaf(node, layers, payload, feat, handler) {
-	var ret = {};
+
+// Refactor this function to reduce its Cognitive Complexity from 67 to the 15 allowed. [+33 locations]
+function leaf (node, layers, payload, feat, handler) {
+	let ret = {};
 
 	if (handler && typeof handler != "function") {
 		ret.err = "handler should be a function";
@@ -236,7 +238,7 @@ function leaf(node, layers, payload, feat, handler) {
 		}
 
 		if (Object.prototype.hasOwnProperty.call(node, next_layer)) {
-			ret = leaf(node[next_layer], layers, payload, feat, handler); 
+			ret = leaf(node[next_layer], layers, payload, feat, handler);
 		} else {
 			//~ console.log('No Path Matched!');
 			if (handler) {
@@ -255,7 +257,7 @@ function leaf(node, layers, payload, feat, handler) {
 			}
 		}
 
-		
+
 		if (!ret.handler) {
 			// .get and fallback
 			// console.log('FALLBACK!');
@@ -279,11 +281,11 @@ function MatchResult (ret = {}) {
 	this.handler = ret.handler;
 	this.payload = ret.payload;
 	this.default = ret.default;
-	
+
 	return this;
 }
 
-MatchResult.prototype.run = function(params, cb) {
+MatchResult.prototype.run = function (params, cb) {
 
 	// only cb
 	if (typeof params === "function") {
@@ -306,11 +308,11 @@ MatchResult.prototype.run = function(params, cb) {
 	}
 
 	let result = this.handler(this.payload);
-	
+
 	if (cb && typeof cb === "function") {
 		return cb(result);
 	}
-	
+
 	return result;
 };
 
