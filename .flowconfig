@@ -9,3 +9,8 @@
 [options]
 
 [strict]
+
+[untyped]
+
+[declarations]
+.*/node_modules/.*
