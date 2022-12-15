@@ -43,3 +43,6 @@ sonar-project.properties
 .eslintrc.js
 *.tgz
 
+.dcignore
+.node-version
+.prettierrc.js
