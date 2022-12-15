@@ -87,8 +87,8 @@ Anyroute.prototype.notfound = function(handler) {
  *
  */
 Anyroute.prototype.set = function(path, handler, feat) {
-	var layers = [];
-	var payload = {};
+	let layers = [];
+	let payload = {};
 	feat = feat || "default";
 	path = path.trim();
 
@@ -119,7 +119,7 @@ Anyroute.prototype.set = function(path, handler, feat) {
  *
  */
 Anyroute.prototype.get = function(path, payload, feat) {
-	var layers = [];
+	let layers = [];
 	payload = payload || {};
 	feat = feat || "default";
 	path = path.trim();
@@ -128,7 +128,7 @@ Anyroute.prototype.get = function(path, payload, feat) {
 
 	// console.log('Final layers: ', layers);
 
-	var ret = leaf(this.pool, layers, payload, feat);
+	let ret = leaf(this.pool, layers, payload, feat);
 	ret.default = this.default;
 	// console.log('Get from Routing pool - result: ', ret)
 	
@@ -174,10 +174,8 @@ function leaf(node, layers, payload, feat, handler) {
 	}
 
 	// remove empty layer
-	var tmp_next_layer_name = layers[0];
-	if (tmp_next_layer_name) {
-		tmp_next_layer_name = tmp_next_layer_name.replace(/^:+/, "");
-	}
+
+	let tmp_next_layer_name = "";
 	while (tmp_next_layer_name === "") {
 		layers.shift();
 
@@ -237,7 +235,7 @@ function leaf(node, layers, payload, feat, handler) {
 			//~ console.log('Set PLACEHOLDER');
 		}
 
-		if (node.hasOwnProperty(next_layer)) {
+		if (Object.prototype.hasOwnProperty.call(node, next_layer)) {
 			ret = leaf(node[next_layer], layers, payload, feat, handler); 
 		} else {
 			//~ console.log('No Path Matched!');
@@ -246,7 +244,7 @@ function leaf(node, layers, payload, feat, handler) {
 				//~ console.log('Create new Node');
 				node[next_layer] = {};
 				ret = leaf(node[next_layer], layers, payload, feat, handler);
-			} else if (node.hasOwnProperty("PLACEHOLDER")) {
+			} else if (Object.prototype.hasOwnProperty.call(node, "PLACEHOLDER")) {
 				// .get and set value to placeholder var
 				payload[node.var_name] = next_layer;
 				next_layer = "PLACEHOLDER";
