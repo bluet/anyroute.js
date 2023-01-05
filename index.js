@@ -176,8 +176,12 @@ function leaf (node, layers, payload, feat, handler) {
 	}
 
 	// remove empty layer
+	let tmp_next_layer_name = layers[0];
+	if (tmp_next_layer_name) {
+		tmp_next_layer_name = tmp_next_layer_name.replace(/^:+/, "");
+	}
 
-	let tmp_next_layer_name = "";
+	// let tmp_next_layer_name = "";
 	while (tmp_next_layer_name === "") {
 		layers.shift();
 

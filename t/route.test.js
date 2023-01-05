@@ -149,7 +149,7 @@ test("get has empty layer", (t) => {
 	t.false(ret instanceof MatchResult);
 	t.false(ret.err);
 	// t.equal(ret.handler.name, "handler");
-	t.deepEqual(ret, { "aaa": "forty", "bbb": "bobs", "and": "adam" });
+	t.deepEqual(ret, { "aoo": "forty", "boo": "bobs", "and": "adam" });
 
 	anyroute.notfound((matchResult) => { return matchResult.payload.foo + matchResult.payload.and; });
 	ret = anyroute.set("/f/:foo/b/:bar/bro", handler).get("/f/forty/b/bobs").run({ "foo": "five", "and": "adams" });
