@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/BlueT/anyroute.js.svg?branch=master)](https://travis-ci.org/BlueT/anyroute.js)
+[![Node.js CI](https://github.com/bluet/anyroute.js/actions/workflows/node.js.yml/badge.svg)](https://github.com/bluet/anyroute.js/actions/workflows/node.js.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=anyroute&metric=alert_status)](https://sonarcloud.io/dashboard?id=anyroute)
 [![Open Source Helpers](https://www.codetriage.com/bluet/anyroute.js/badges/users.svg)](https://www.codetriage.com/bluet/anyroute.js) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbluet%2Fanyroute.js.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbluet%2Fanyroute.js?ref=badge_shield)
  
