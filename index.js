@@ -57,9 +57,7 @@
 */
 
 function Anyroute (params = {}) {
-	//~ var self = this;
 	this.default = params.default;
-	// this.path = params.path;
 	this.pool = params.pool || {};
 }
 
@@ -103,8 +101,6 @@ Anyroute.prototype.set = function (path, handler, feat) {
 
 	layers = path_parser(path);
 
-	//~ console.log('Final layers: ', layers);
-
 	let ret = leaf(this.pool, layers, payload, feat, handler);
 	return Object.assign(this, ret);
 };
@@ -126,11 +122,8 @@ Anyroute.prototype.get = function (path, payload, feat) {
 
 	layers = path_parser(path);
 
-	// console.log('Final layers: ', layers);
-
 	let ret = leaf(this.pool, layers, payload, feat);
 	ret.default = this.default;
-	// console.log('Get from Routing pool - result: ', ret)
 
 	return new MatchResult(ret);
 };
@@ -275,7 +268,6 @@ function leaf (node, layers, payload, feat, handler) {
 		}
 	}
 
-	// console.log(ret);
 	return ret;
 }
 
@@ -304,8 +296,6 @@ MatchResult.prototype.run = function (params, cb) {
 			}
 		});
 	}
-
-	// console.log(this);
 
 	if (this.err) {
 		return typeof(this.default) === "function" ? this.default(this) : this;

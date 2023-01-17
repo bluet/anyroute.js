@@ -1,9 +1,9 @@
-var Anyroute = require("anyroute");
-var ar = new Anyroute;
+let Anyroute = require("anyroute");
+let ar = new Anyroute;
 
 function handler_default () {}
 function handler_post () {}
-var ret;
+let ret;
 
 ret = ar.set("/collection/:cid/tab/:tabID", handler_default);
 console.log(ret);

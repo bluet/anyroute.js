@@ -6,18 +6,16 @@ const { Anyroute, MatchResult } = require(appRoot + "/index.js");
 const anyroute = new Anyroute;
 
 function handler () {
-	// console.log(arguments);
 	return arguments[0];
 }
 function handler_post () {
-	// console.log(arguments);
 	return arguments[0];
 }
 
 
 test("set default handler to placeholder", (t) => {
 	let ret = anyroute.set("/collection/:cid/tab/:tabID", handler);
-	// console.log(ret);
+
 	t.true(ret instanceof Anyroute);
 	t.false(ret.err);
 	t.equal(ret.handler.name, "handler");
@@ -43,7 +41,6 @@ test("set default handler to placeholder, specifying method \"post\".", (t) => {
 	t.end();
 });
 
-//~ console.log('--------------------');
 
 test("get default handler and payload from a path.", (t) => {
 	let ret = anyroute.get("/collection/123/tab/456");
@@ -71,7 +68,6 @@ test("get default handler and payload from a path.", (t) => {
 	t.equal(ret.handler.name, "handler");
 	t.deepEqual(ret.payload, { "cid": ":cid", "tabID": ":tabID" });
 	t.deepEqual(ret.payload, ret.run());
-	ret.run((input) => {return console.log("callback in run(): " + JSON.stringify(input, null, 4));});
 	t.end();
 });
 
@@ -100,8 +96,6 @@ test("get head method handler and payload from a path. No matching feat so retur
 	t.equal(ret.err, "not found");
 	t.equal(ret.handler.name, "handler");
 	t.deepEqual(ret.payload, { "cid": "abc", "tabID": "xyz" });
-	// t.deepEqual(ret, ret.run());
-	// ret.run((input) => console.log("callback in run(): " + JSON.stringify(input, null, 4)));
 	t.end();
 });
 
@@ -111,8 +105,6 @@ test("get handler and payload from a path. No match so return error.", (t) => {
 	t.equal(ret.err, "not found");
 	t.false(ret.handler);
 	t.deepEqual(ret.payload, {});
-	// t.deepEqual(ret, ret.run());
-	// ret.run((input) => console.log("callback in run(): " + JSON.stringify(input, null, 4)));
 	t.end();
 });
 
@@ -120,7 +112,6 @@ test("set then get and run", (t) => {
 	let ret = anyroute.set("/foo/:foo/bar/:bar", handler).get("/foo/forty/bar/bobs").run({ "and": "adam" });
 	t.false(ret instanceof MatchResult);
 	t.false(ret.err);
-	// t.equal(ret.handler.name, "handler");
 	t.deepEqual(ret, { "foo": "forty", "bar": "bobs", "and": "adam" });
 
 	anyroute.notfound((matchResult) => { return matchResult.payload.foo + matchResult.payload.and; });
@@ -134,7 +125,6 @@ test("set has empty layer", (t) => {
 	let ret = anyroute.set("/aoo/:aoo///boo/:boo", handler).get("/aoo/forty/boo/bobs").run({ "and": "adam" });
 	t.false(ret instanceof MatchResult);
 	t.false(ret.err);
-	// t.equal(ret.handler.name, "handler");
 	t.deepEqual(ret, { "aoo": "forty", "boo": "bobs", "and": "adam" });
 
 	anyroute.notfound((matchResult) => { return matchResult.payload.foo + matchResult.payload.and; });
@@ -148,7 +138,6 @@ test("get has empty layer", (t) => {
 	let ret = anyroute.set("/aaa/:aoo/bbb/:boo", handler).get("/aaa/forty///bbb/bobs").run({ "and": "adam" });
 	t.false(ret instanceof MatchResult);
 	t.false(ret.err);
-	// t.equal(ret.handler.name, "handler");
 	t.deepEqual(ret, { "aoo": "forty", "boo": "bobs", "and": "adam" });
 
 	anyroute.notfound((matchResult) => { return matchResult.payload.foo + matchResult.payload.and; });
