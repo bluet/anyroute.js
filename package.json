@@ -4,7 +4,7 @@
   "description": "A flexable lightweight router you can use in nodejs and browser. No dependency.",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover tape ./t/*.test.js"
+    "test": "nyc tape ./t/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -27,8 +27,8 @@
   "homepage": "https://github.com/BlueT/anyroute.js#readme",
   "tonicExampleFilename": "example.js",
   "devDependencies": {
-    "app-root-path": "^2.0.1",
-    "istanbul": "^0.4.5",
-    "tape": "^4.6.3"
+    "app-root-path": "^3.1.0",
+    "nyc": "^15.1.0",
+    "tape": "^5.6.3"
   }
 }

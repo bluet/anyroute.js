@@ -1,0 +1,14 @@
+{
+  "include": [
+    "index.js"
+  ],
+  "exclude": [
+    "t/*",
+    "example.js"
+  ],
+  "reporter": [
+    "lcovonly",
+    "text",
+    "text-summary"
+  ]
+}
