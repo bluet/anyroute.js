@@ -3,7 +3,9 @@
     "index.js"
   ],
   "exclude": [
-    "t/*",
+    "node_modules/**",
+    "coverage/**",
+    "t/**",
     "example.js"
   ],
   "reporter": [
