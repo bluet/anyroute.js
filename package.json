@@ -27,7 +27,9 @@
   "homepage": "https://github.com/BlueT/anyroute.js#readme",
   "tonicExampleFilename": "example.js",
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
     "app-root-path": "^3.1.0",
+    "eslint": "^8.32.0",
     "nyc": "^15.1.0",
     "tape": "^5.6.3"
   }

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 let Anyroute = require("anyroute");
 let ar = new Anyroute;
 

@@ -46,3 +46,5 @@ sonar-project.properties
 .dcignore
 .node-version
 .prettierrc.js
+.github/
+*.nycrc.*
